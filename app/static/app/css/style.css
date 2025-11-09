@@ -70,7 +70,7 @@ h2 {
 }
 /* === Стили для боковой панели === */
 #sidebar {
-    width: 89px;
+    width: 85px;
     height: calc(100vh - 56px - 2rem); /* Высота: 100% вьюпорта - высота navbar - отступ контейнера */
     min-height: 400px;
     transition: width 0.3s ease;

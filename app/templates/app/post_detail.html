@@ -32,7 +32,7 @@
                 {% if user.is_authenticated and post.author != user %}
                     <form method="post" action="{% url 'toggle_like' post.id %}">
                         {% csrf_token %}
-                        {% if post.user_liked %}
+                        {% if user_liked %}
                             <button type="submit" class="btn btn-sm btn-danger">
                                 <em>❤️</em> Отменить лайк
                             </button>
