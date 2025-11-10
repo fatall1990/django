@@ -4,8 +4,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from .forms import UserRegisterForm, UserLoginForm, PostForm
-from .models import Post, Like
+from .forms import UserRegisterForm, UserLoginForm, PostForm, CommentForm
+from .models import Post, Like, Comment
+
+
 # Create your views here.
 def register(request):
     if request.method == 'POST':
@@ -18,6 +20,8 @@ def register(request):
     else:
         form = UserRegisterForm()
     return render(request, "app/register.html", {'form': form})
+
+
 def user_login(request):
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
@@ -34,9 +38,12 @@ def user_login(request):
     else:
         form = UserLoginForm()
     return render(request, 'app/login.html', {'form': form})
+
+
 def user_logout(request):
     logout(request)
     return redirect('login')
+
 
 @login_required
 def home(request):
@@ -45,9 +52,11 @@ def home(request):
 
     # Передаем список posts в шаблон home.html через контекст
     context = {
-        'posts': posts, # 'posts' - это имя переменной, которое будет доступно в шаблоне
+        'posts': posts,  # 'posts' - это имя переменной, которое будет доступно в шаблоне
     }
     return render(request, 'app/home.html', context)
+
+
 @login_required
 def post_detail(request, post_id):
     # Получаем конкретный пост по ID или возвращаем 404, если не найден
@@ -57,25 +66,31 @@ def post_detail(request, post_id):
     if request.user.is_authenticated:
         user_liked = post.likes.filter(user=request.user).exists()  # Используем связь через related_name='likes'
 
+    comment_form = CommentForm()
+
     # Можно передать дополнительные данные, например, комментарии
     return render(request, 'app/post_detail.html', {
         'post': post,
         'user_liked': user_liked,  # Передаём флаг в шаблон
+        'comment_form': comment_form,
     })
+
+
 @login_required
 def post_create(request):
     if request.method == 'POST':
-        form = PostForm(request.POST) # Предполагается, что у тебя есть PostForm
+        form = PostForm(request.POST, request.FILES)  # Предполагается, что у тебя есть PostForm
         if form.is_valid():
-            post = form.save(commit=False) # Не сохраняем в базу пока
-            post.author = request.user # Присваиваем автора текущему пользователю
-            post.save() # Теперь сохраняем
+            post = form.save(commit=False)  # Не сохраняем в базу пока
+            post.author = request.user  # Присваиваем автора текущему пользователю
+            post.save()  # Теперь сохраняем
             messages.success(request, 'Пост успешно создан!')
-            return redirect('home') # Перенаправляем на главную страницу после создания
+            return redirect('home')  # Перенаправляем на главную страницу после создания
     else:
         form = PostForm()
 
     return render(request, 'app/post_create.html', {'form': form})
+
 
 @login_required
 def post_delete(request, post_id):
@@ -89,10 +104,10 @@ def post_delete(request, post_id):
 
     if request.method == 'POST':
         # Если это POST-запрос (пользователь подтвердил удаление через модальное окно)
-        post_title = post.title # Сохраняем заголовок для сообщения
-        post.delete() # Удаляем пост из БД (и связанные объекты, если настроено CASCADE)
+        post_title = post.title  # Сохраняем заголовок для сообщения
+        post.delete()  # Удаляем пост из БД (и связанные объекты, если настроено CASCADE)
         messages.success(request, f'Пост "{post_title}" успешно удалён.')
-        return redirect('home') # Перенаправляем на главную страницу
+        return redirect('home')  # Перенаправляем на главную страницу
 
     # Если это GET-запрос (например, прямой доступ по URL),
     # можно перенаправить или показать страницу подтверждения.
@@ -100,6 +115,7 @@ def post_delete(request, post_id):
     # Лучше перенаправить на детали поста или на главную.
     messages.warning(request, 'Для удаления поста используйте кнопку на странице поста.')
     return redirect('post_detail', post_id=post.id)
+
 
 @login_required
 def toggle_like(request, post_id):
@@ -121,5 +137,40 @@ def toggle_like(request, post_id):
 
     # Перенаправляем обратно на страницу поста
     # request.META.get('HTTP_REFERER') возвращает предыдущую страницу
-    next_url = request.META.get('HTTP_REFERER', reverse('home')) # Если реферера нет, идём на главную
+    next_url = request.META.get('HTTP_REFERER', reverse('home'))  # Если реферера нет, идём на главную
     return HttpResponseRedirect(next_url)
+
+
+@login_required
+def post_edit(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if post.author != request.user:
+        messages.error(request, 'У вас нет прав для редактирования этого поста.')
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Пост "{post.title}" успешно обновлен.')
+            return redirect("post_detail", post_id=post.id)
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'app/post_edit.html', {'form': form, 'post': post})
+
+
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            messages.success(request, f'Комментарий добавлен')
+            return redirect('post_detail', post_id=post.id)
+    return redirect('post_detail', post_id=post.id)
