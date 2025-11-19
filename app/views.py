@@ -275,13 +275,13 @@ def toggle_favorite(request, post_id):
 
     if created:
         # Был добавлен в избранное
-        action = 'добавлен в'
+        action = 'добавлен в избранное'
     else:
         # Уже существовал, значит удаляем
         favorite_obj.delete()
-        action = 'удалён из'
+        action = 'удалён из избранного'
 
-    messages.info(request, f'Пост "{post.title}" {action} избранного.')
+    messages.info(request, f'Пост "{post.title}" {action}.')
 
     # Редиректим обратно на страницу поста
     next_url = request.META.get('HTTP_REFERER', reverse('home'))
