@@ -1,22 +1,49 @@
 /* === Общие стили === */
 body {
-    background-color: #f8fafc; /* Более мягкий светло-голубой фон */
+    background-color: #f8fafc;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
+
 .navbar-brand {
     font-weight: bold;
 }
+
 .container {
     max-width: 1820px;
-    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
+
+/* === Центрирование контента === */
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 120px);
+    padding: 20px 0;
+}
+
+.centered-content {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
 /* === Алерт === */
 .alert {
     border-radius: 10px;
     font-weight: 500;
     text-align: center;
+    max-width: 500px;
+    margin: 20px auto;
 }
-/* === Карточки постов  === */
+
+/* === Карточки постов === */
 .post-card {
     background-color: #ffffff;
     border-radius: 12px;
@@ -30,11 +57,13 @@ body {
     justify-content: space-between;
     cursor: pointer;
 }
+
 .post-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
     border-color: #b2d8ff;
 }
+
 .post-card .post-title {
     font-size: 1.25rem;
     font-weight: 600;
@@ -42,12 +71,14 @@ body {
     margin-bottom: 0.5rem;
     line-height: 1.3;
 }
+
 .post-meta {
     font-size: 0.875rem;
     color: #64748b;
     margin-bottom: 0.75rem;
     font-style: italic;
 }
+
 .post-content {
     font-size: 0.95rem;
     color: #334155;
@@ -55,76 +86,145 @@ body {
     margin-bottom: 1rem;
     flex-grow: 1;
 }
+
 /* === Заголовки страницы === */
 h1 {
     color: #1e293b;
     font-weight: 700;
     letter-spacing: -0.5px;
     text-align: center;
+    margin-bottom: 2rem;
 }
+
 h2 {
     color: #334155;
     font-weight: 600;
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
+
 /* === Стили для боковой панели === */
 #sidebar {
     width: 89px;
-    height: calc(100vh - 56px - 2rem); /* Высота: 100% вьюпорта - высота navbar - отступ контейнера */
+    height: calc(100vh - 56px - 2rem);
     min-height: 400px;
     transition: width 0.3s ease;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    /* position: sticky; /* Опционально: может помочь при внутреннем скролле */
-    top: 56px; /* Приклеивает к верху под navbar */
-
+    position: sticky;
+    top: 56px;
 }
+
 #sidebar:hover {
     width: 250px;
-    .nav.flex-column{
-        display: block ;
-    }
 }
+
+#sidebar:hover .nav.flex-column {
+    display: block !important;
+}
+
 .sidebar-content {
     height: 100%;
     display: flex;
     flex-direction: column;
-    .nav.flex-column{
-        display: none ;
-    }
 }
+
+.sidebar-content .nav.flex-column {
+    display: none;
+}
+
 .sidebar-header {
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Добавляет "..." если текст обрезан */
+    text-overflow: ellipsis;
 }
+
 .sidebar-header h5 {
     margin: 0;
     font-size: 1.1rem;
 }
+
 .nav.flex-column {
-    flex-grow: 1; /* Растягивает список навигации на оставшееся место */
+    flex-grow: 1;
 }
+
 .nav-link {
     color: rgba(255, 255, 255, 0.75);
     border-radius: 4px;
     margin: 5px 0;
-    white-space: nowrap; /* Не переносит текст ссылок */
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     padding: 8px 12px;
+    transition: all 0.3s ease;
 }
+
 .nav-link:hover {
     color: white;
     background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
 }
-/* Дополнительно: если хочется, чтобы фон основного контента был светлее/другим */
-.bg-light {
-    background-color: #f8fafc !important; /* Можно оставить или изменить */
+
+/* === Стили для форм === */
+.form-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    margin: 0 auto;
+    max-width: 450px;
+    width: 100%;
 }
-/* === Улучшение адаптивности для карточек === */
+
+.form-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 12px 15px;
+    border: 1px solid #d1d5db;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.form-control:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.btn-primary {
+    border-radius: 8px;
+    padding: 12px 30px;
+    border: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.form-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.form-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* === Адаптивность === */
 @media (max-width: 768px) {
     .post-card {
         padding: 15px;
@@ -132,24 +232,51 @@ h2 {
     .post-title {
         font-size: 1.1rem;
     }
-}
-/* Дополнительный стиль для текста внутри .nav-link, чтобы он скрывался/появлялся плавно */
-.nav-link::before {
-    content: attr(data-bs-title); /* Используем атрибут data-bs-title для отображения текста при hover */
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    white-space: nowrap;
-    position: absolute;
-    background-color: #343a40;
-    color: white;
-    padding: 2px 5px;
-    border-radius: 4px;
-    margin-left: 10px;
-    z-index: 1001;
-}
-#sidebar:hover .nav-link::before {
-    visibility: visible;
-    opacity: 1;
+    .form-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    #sidebar {
+        width: 60px;
+    }
+    #sidebar:hover {
+        width: 200px;
+    }
 }
 
+/* === Утилиты === */
+.text-center {
+    text-align: center;
+}
+
+.d-flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.min-vh-80 {
+    min-height: 80vh;
+}
+
+.bg-light {
+    background-color: #f8fafc !important;
+}
+/* === Выравнивание полей формы по центру === */
+.card-body .mb-3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-body .form-label {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+}
+
+.card-body .form-control {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+}
