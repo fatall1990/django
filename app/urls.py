@@ -15,9 +15,15 @@ urlpatterns = [
     path('post/<int:post_id>/comment/', views.add_comment, name='add_comment'),
     path('favorites/', views.favorites, name='favorites'),
     path('post/<int:post_id>/toggle_favorite/', views.toggle_favorite, name='toggle_favorite'),
+
     path('messages/', views.messages_list, name='messages_list'),
     path('messages/<int:recipient_id>/', views.messages_list, name='messages_list'),
     path('messages/send/<int:recipient_id>/', views.send_message, name='send_message'),
+
     path('profile/', views.profile_edit, name='profile_edit'),
     path('profile/<str:username>/', views.profile_view, name='profile_view'),
+    #магазин
+    path('shop/', views.shop_home, name="shop_home"),
+    path('shop/category/<int:category_id>/', views.shop_category, name="shop_category"),
+    path('shop/product/<int:product_id>/', views.shop_product_detail, name="shop_product_detail"),
 ]
